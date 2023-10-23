@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 axios.interceptors.response.use(null, (error) => {
   console.log("Interceptor called da");
@@ -8,7 +9,7 @@ axios.interceptors.response.use(null, (error) => {
     error.response.status < 500;
   if (!expectedError) {
     console.log("Logging an unexpected  error", error);
-    alert("An unexpected error occured");
+    toast("An unexpected error occured");
   }
   return Promise.reject(error);
 });
