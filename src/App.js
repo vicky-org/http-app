@@ -1,8 +1,21 @@
 import React, { Component } from "react";
 import axios from "axios";
 import "./App.css";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import { ToastContainer } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
+
+axios.interceptors.response.use(null, (error) => {
+  console.log("Interceptor called da");
+  const expectedError =
+    error.response &&
+    error.response.status >= 404 &&
+    error.response.status < 500;
+  if (!expectedError) {
+    console.log("Logging an unexpected  error", error);
+    alert("An unexpected error occured");
+  }
+  return Promise.reject(error);
+});
 
 const apiEndpoint = "https://jsonplaceholder.typicode.com/posts";
 
@@ -12,7 +25,9 @@ class App extends Component {
   };
 
   async componentDidMount() {
+    console.log("in componentDidMount");
     const { data: posts } = await axios.get(apiEndpoint);
+    console.log("done componentDidMount");
     this.setState({ posts });
   }
 
@@ -43,20 +58,10 @@ class App extends Component {
     const posts = this.state.posts.filter((p) => p.id !== post.id);
     this.setState({ posts });
     try {
-      await axios.delete(apiEndpoint + "/" + post.id);
+      await axios.delete(apiEndpoint + "/hello" + post.id);
     } catch (ex) {
-      // Expected (404: not found, 400: bad request) - CLIENT ERRORS
-      // - Display a specific error message
       if (ex.response && ex.response.status === 404)
-        alert("This post has already been delete");
-      else {
-        // UnExpected (network down, server down, db down, bug)
-        // - Log them
-        // - Display a generic and friendly error message
-        console.log("Logging the error", ex);
-        alert("An unexpected error occured");
-      }
-
+        alert("This po st has already been delete");
       this.setState({ posts: originalPosts });
     }
   };
@@ -64,7 +69,6 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
-        <ToastContainer />
         <button className="btn btn-primary" onClick={this.handleAdd}>
           Add
         </button>
