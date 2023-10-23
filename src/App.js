@@ -1,21 +1,6 @@
 import React, { Component } from "react";
-import axios from "axios";
+import http from "./services/httpService";
 import "./App.css";
-// import { ToastContainer } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-
-axios.interceptors.response.use(null, (error) => {
-  console.log("Interceptor called da");
-  const expectedError =
-    error.response &&
-    error.response.status >= 404 &&
-    error.response.status < 500;
-  if (!expectedError) {
-    console.log("Logging an unexpected  error", error);
-    alert("An unexpected error occured");
-  }
-  return Promise.reject(error);
-});
 
 const apiEndpoint = "https://jsonplaceholder.typicode.com/posts";
 
@@ -26,7 +11,7 @@ class App extends Component {
 
   async componentDidMount() {
     console.log("in componentDidMount");
-    const { data: posts } = await axios.get(apiEndpoint);
+    const { data: posts } = await http.get(apiEndpoint);
     console.log("done componentDidMount");
     this.setState({ posts });
   }
@@ -34,7 +19,7 @@ class App extends Component {
   handleAdd = async () => {
     console.log("Add");
     const obj = { title: "a", body: "b" };
-    const { data: post } = await axios.post(apiEndpoint, obj);
+    const { data: post } = await http.post(apiEndpoint, obj);
     console.log(post);
     const posts = [post, ...this.state.posts];
     this.setState({ posts });
@@ -43,7 +28,7 @@ class App extends Component {
   handleUpdate = async (post) => {
     console.log("Updating post-id", post.id);
     post.title = "new_title";
-    await axios.put(apiEndpoint + "/" + post.id, post);
+    await http.put(apiEndpoint + "/" + post.id, post);
     const posts = [...this.state.posts];
     const index = posts.indexOf(post);
     posts[index] = { ...post };
@@ -58,7 +43,7 @@ class App extends Component {
     const posts = this.state.posts.filter((p) => p.id !== post.id);
     this.setState({ posts });
     try {
-      await axios.delete(apiEndpoint + "/hello" + post.id);
+      await http.delete(apiEndpoint + "/hello" + post.id);
     } catch (ex) {
       if (ex.response && ex.response.status === 404)
         alert("This po st has already been delete");
