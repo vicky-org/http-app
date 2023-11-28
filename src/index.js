@@ -4,6 +4,10 @@ import "./index.css";
 import "bootstrap/dist/css/bootstrap.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import logger from "./services/logService";
+import http from "./services/httpService";
+
+logger.init();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import logger from "./logService";
 
 axios.interceptors.response.use(null, (error) => {
   console.log("Interceptor called da");
@@ -8,8 +9,9 @@ axios.interceptors.response.use(null, (error) => {
     error.response.status >= 404 &&
     error.response.status < 500;
   if (!expectedError) {
-    console.log("Logging an unexpected  error", error);
-    toast("An unexpected error occured");
+    logger.log(error);
+    //console.log("Logging an unexpected  error", error);
+    toast("An unexpected error occured da");
   }
   return Promise.reject(error);
 });
